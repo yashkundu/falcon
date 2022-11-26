@@ -1,0 +1,12 @@
+# Configuration file
+listen=3000
+
+[[route]]
+endpoint="/hello"
+match="prefix"
+
+[[route.backend]]
+url="http://localhost:3001"
+
+[[route.backend]]
+url="http://localhost:3002"
