@@ -1,12 +1,44 @@
+
+[core]
 # Configuration file
 listen=3000
 
-[[route]]
+# The maximum connections that the reverse-proxy will allow at a particular time
+# 0 is infinite
+limitMaxConn=30000
+
+readTimeout=5
+writeTimeout=10
+
+idleTimeout=60
+
+[limitReq]
+enable=true
+# in millisecond
+interval=1000
+frequency=100
+
+[log]
+level="debug"
+
+[proxy]
+
+[[proxy.routes]]
 endpoint="/hello"
 match="prefix"
 
-[[route.backend]]
+[[proxy.routes.backends]]
 url="http://localhost:3001"
 
-[[route.backend]]
+[[proxy.routes.backends]]
+url="http://localhost:3002"
+
+[[proxy.routes]]
+endpoint="/world"
+match="prefix"
+
+[[proxy.routes.backends]]
+url="http://localhost:3001"
+
+[[proxy.routes.backends]]
 url="http://localhost:3002"

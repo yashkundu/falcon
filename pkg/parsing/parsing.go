@@ -2,8 +2,6 @@ package parsing
 
 import (
 	"log"
-	"os"
-	"path/filepath"
 	"sync"
 
 	"github.com/BurntSushi/toml"
@@ -11,18 +9,42 @@ import (
 
 // The configuration struct of config.toml
 type Config struct {
-	port   int     // The port on which reverse-proxy will run
-	routes []Route // The routes which have to be proxied
+	Core     Core     `toml:"core"`
+	LimitReq LimitReq `toml:"limitReq"`
+	Log      Log      `toml:"log"`
+	Proxy    Proxy    `toml:"proxy"`
+}
+
+type Core struct {
+	Listen       int `toml:"listen"`
+	LimitMaxConn int `toml:"limitMaxConn"`
+	ReadTimeout  int `toml:"readTimeout"`
+	WriteTimeout int `toml:"writeTimeout"`
+	IdleTimeout  int `toml:"idleTimeout"`
+}
+
+type LimitReq struct {
+	Enable    bool `toml:"enable"`
+	Interval  int  `toml:"interval"`
+	Frequency int  `toml:"frequency"`
+}
+
+type Log struct {
+	Level string `toml:"level"`
+}
+
+type Proxy struct {
+	Routes []Route `toml:"routes"`
 }
 
 type Route struct {
-	endpoint string    //URL Path of incoming request
-	match    string    // How to match the path prefix, regex or exact
-	backends []Backend // List of the servers to transport requests
+	Endpoint string    `toml:"endpoint"`
+	Match    string    `toml:"match"`
+	Backends []Backend `toml:"backends"`
 }
 
 type Backend struct {
-	url string
+	Url string `toml:"url"`
 }
 
 var (
@@ -34,11 +56,7 @@ const fileName = "config.toml"
 
 func GetConfig() *Config {
 	once.Do(func() {
-		curDir, err1 := os.Getwd()
-		if err1 != nil {
-			log.Fatal(err1)
-		}
-		filePath := filepath.Join(filepath.Dir(filepath.Dir(curDir)), "configs", "configs.toml")
+		filePath := "C:\\Users\\Hp\\OneDrive\\Desktop\\falcon\\configs\\config.toml"
 		log.Printf("filePath : %s", filePath)
 
 		_, err := toml.DecodeFile(filePath, &config)
