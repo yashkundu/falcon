@@ -1,0 +1,47 @@
+
+[core]
+# Configuration file
+listen=80
+apiport=9900
+
+# The maximum connections that the reverse-proxy will allow at a particular time
+# 0 is infinite
+limitMaxConn=0
+
+readTimeout=0
+writeTimeout=0
+
+idleTimeout=0
+
+# [limitReq]
+# enable=true
+# # in millisecond
+# interval=1000
+# frequency=100
+
+[log]
+level="debug"
+
+[proxy]
+
+[[proxy.routes]]
+endpoint="/hello"
+# match (specifies how routes are mathed to the incoming request)
+# match - [0 - exact, 1 - prefix, 2 - regex ]
+match=1
+# balancer (specifies which load balancing algo to be used in case of multiple backends)
+# balancer - [0 - random, 1 - roundrobin, 2 - weighted-roundrobin ]
+balancer=1
+
+[[proxy.routes.backends]]
+# url should be in proper format <schema>://<host>:<port>
+url="http://localhost:3001"
+
+
+[[proxy.routes]]
+endpoint="/world"
+match=1
+
+[[proxy.routes.backends]]
+url="http://localhost:3001"
+

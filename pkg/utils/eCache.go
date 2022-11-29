@@ -10,27 +10,27 @@ import (
 
 type timeKey struct {
 	inTime time.Time
-	key    interface{}
+	key    string
 }
 
 type ECache struct {
 	keyQueue *list.List
-	repeats  map[interface{}]int
-	datas    map[interface{}]interface{}
+	repeats  map[string]int
+	datas    map[string]int
 	mu       *sync.Mutex
 	ttl      time.Duration
 }
 
 func NewECache(ttl time.Duration) *ECache {
 	ec := new(ECache)
-	ec.datas = make(map[interface{}]interface{})
-	ec.repeats = make(map[interface{}]int)
+	ec.datas = make(map[string]int)
+	ec.repeats = make(map[string]int)
 	ec.keyQueue = list.New()
 	ec.mu = new(sync.Mutex)
 	return ec
 }
 
-func (ec *ECache) Set(key, data interface{}) {
+func (ec *ECache) Set(key string, data int) {
 	ec.mu.Lock()
 	defer ec.mu.Unlock()
 	ec.refresh()
@@ -54,7 +54,7 @@ func (ec *ECache) Set(key, data interface{}) {
 
 }
 
-func (ec *ECache) Get(key interface{}) (interface{}, bool) {
+func (ec *ECache) Get(key string) (int, bool) {
 	ec.mu.Lock()
 	defer ec.mu.Unlock()
 	ec.refresh()

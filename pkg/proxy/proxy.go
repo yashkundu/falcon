@@ -103,9 +103,13 @@ func newHostReverseProxy(server *balancer.Server) *httputil.ReverseProxy {
 
 type GateServer struct{}
 
-// proxy80 -- http , proxy443 -- https (Not implemented now)
+// proxy80 -- http , proxy443 -- https (Not implemented now), proxyws -- websocket (Not implemented untill now)
 func (s *GateServer) proxy80() *http.Server {
-	ln, err := net.Listen("tcp", ":80")
+	port := parsing.GetConfig().Core.Listen
+	if port == 0 {
+		port = 80
+	}
+	ln, err := net.Listen("tcp", fmt.Sprintf(":%d", port))
 	if err != nil {
 		panic(err)
 	}
@@ -137,8 +141,8 @@ func (s *GateServer) proxy80() *http.Server {
 }
 
 func (s *GateServer) Run() []*http.Server {
-	ss := make([]*http.Server, 0)
+	servers := make([]*http.Server, 0)
 	p80 := s.proxy80()
-	ss = append(ss, p80)
-	return ss
+	servers = append(servers, p80)
+	return servers
 }
