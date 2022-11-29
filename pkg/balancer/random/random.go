@@ -9,28 +9,28 @@ import (
 
 // Individual roundrobin balancer for each route
 type random struct {
-	Servers []balancer.Server
+	Servers []*balancer.Server
 }
 
-func NewBalancer(urls []*url.URL) (*random, error) {
+func NewBalancer(urls []*url.URL) *random {
 	rr := &random{}
 
 	for i := 0; i < len(urls); i++ {
 		rr.AddServer(urls[i])
 	}
-	return rr, nil
+	return rr
 }
 
 func (rr *random) Next() *balancer.Server {
-	return &rr.Servers[rand.Int()%len(rr.Servers)]
+	return rr.Servers[rand.Int()%len(rr.Servers)]
 }
 
 func (rr *random) AddServer(url *url.URL) {
-	rr.Servers = append(rr.Servers, balancer.Server{URL: url})
+	rr.Servers = append(rr.Servers, &balancer.Server{URL: url})
 }
 
-func (rr *random) GetServers() *[]balancer.Server {
-	return &rr.Servers
+func (rr *random) GetServers() []*balancer.Server {
+	return rr.Servers
 }
 
 func (rr *random) CountServers() int {

@@ -9,30 +9,30 @@ import (
 
 // Individual roundrobin balancer for each route
 type roundrobin struct {
-	Servers []balancer.Server
+	Servers []*balancer.Server
 	next    uint32
 }
 
-func NewBalancer(urls []*url.URL) (*roundrobin, error) {
+func NewBalancer(urls []*url.URL) *roundrobin {
 	rr := &roundrobin{}
 
 	for i := 0; i < len(urls); i++ {
 		rr.AddServer(urls[i])
 	}
-	return rr, nil
+	return rr
 }
 
 func (rr *roundrobin) Next() *balancer.Server {
 	n := atomic.AddUint32(&rr.next, 1)
-	return &rr.Servers[(int(n)-1)%len(rr.Servers)]
+	return rr.Servers[(int(n)-1)%len(rr.Servers)]
 }
 
 func (rr *roundrobin) AddServer(url *url.URL) {
-	rr.Servers = append(rr.Servers, balancer.Server{URL: url})
+	rr.Servers = append(rr.Servers, &balancer.Server{URL: url})
 }
 
-func (rr *roundrobin) GetServers() *[]balancer.Server {
-	return &rr.Servers
+func (rr *roundrobin) GetServers() []*balancer.Server {
+	return rr.Servers
 }
 
 func (rr *roundrobin) CountServers() int {

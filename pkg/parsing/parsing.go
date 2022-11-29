@@ -27,6 +27,7 @@ type LimitReq struct {
 	Enable    bool `toml:"enable"`
 	Interval  int  `toml:"interval"`
 	Frequency int  `toml:"frequency"`
+	Mode      int  `toml:"mode"`
 }
 
 type Log struct {
@@ -39,7 +40,8 @@ type Proxy struct {
 
 type Route struct {
 	Endpoint string    `toml:"endpoint"`
-	Match    string    `toml:"match"`
+	Match    int       `toml:"match"`
+	Balancer int       `toml:"balancer"`
 	Backends []Backend `toml:"backends"`
 }
 

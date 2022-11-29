@@ -8,7 +8,7 @@ import (
 type Balancer interface {
 	Next() *Server
 	AddServer(url *url.URL)
-	GetServers() *[]Server
+	GetServers() []*Server
 	CountServers() int
 }
 
@@ -17,4 +17,5 @@ type Server struct {
 	IsDead bool
 	Wt     uint32
 	Mu     sync.RWMutex
+	// pre-dns-resolution
 }

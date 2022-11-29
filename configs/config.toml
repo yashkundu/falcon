@@ -17,6 +17,7 @@ enable=true
 # in millisecond
 interval=1000
 frequency=100
+mode=0
 
 [log]
 level="debug"

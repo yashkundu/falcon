@@ -9,7 +9,7 @@ import (
 
 // Individual roundrobin balancer for each route
 type wroundrobin struct {
-	Servers []balancer.Server
+	Servers []*balancer.Server
 	wts     []uint32
 	totalWt uint32
 	next    uint32
@@ -33,13 +33,13 @@ func (wrr *wroundrobin) reduce() {
 	}
 }
 
-func NewBalancer(urls []*url.URL) (*wroundrobin, error) {
+func NewBalancer(urls []*url.URL) *wroundrobin {
 	wrr := &wroundrobin{}
 	for i := 0; i < len(urls); i++ {
 		wrr.AddServer(urls[i])
 	}
 	wrr.reduce()
-	return wrr, nil
+	return wrr
 }
 
 func upperBound(wts []uint32, x uint32) int {
@@ -61,7 +61,7 @@ func upperBound(wts []uint32, x uint32) int {
 func (wrr *wroundrobin) Next() *balancer.Server {
 	n := atomic.AddUint32(&wrr.next, 1)
 	ind := upperBound(wrr.wts, (n-1)%wrr.totalWt+uint32(1))
-	return &wrr.Servers[ind]
+	return wrr.Servers[ind]
 }
 
 func (wrr *wroundrobin) AddServer(url *url.URL) {
@@ -69,13 +69,13 @@ func (wrr *wroundrobin) AddServer(url *url.URL) {
 	if curWt < 1 {
 		curWt = 1
 	}
-	wrr.Servers = append(wrr.Servers, balancer.Server{URL: url})
+	wrr.Servers = append(wrr.Servers, &balancer.Server{URL: url})
 	wrr.totalWt += uint32(curWt)
 	wrr.wts = append(wrr.wts, wrr.wts[len(wrr.wts)-1]+uint32(curWt))
 }
 
-func (wrr *wroundrobin) GetServers() *[]balancer.Server {
-	return &wrr.Servers
+func (wrr *wroundrobin) GetServers() []*balancer.Server {
+	return wrr.Servers
 }
 
 func (wrr *wroundrobin) CountServers() int {
