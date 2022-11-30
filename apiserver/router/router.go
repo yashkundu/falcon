@@ -10,6 +10,6 @@ func InitRouter(router *mux.Router) {
 		panic("mux.Router is nil")
 	}
 
-	router.HandleFunc("/apiStatus/reqcount", controllers.StatusReqCount)
+	router.HandleFunc("/apiStatus/reqCount", controllers.StatusReqCount)
 	router.HandleFunc("/apiStatus/backendChange", controllers.BackendChange)
 }

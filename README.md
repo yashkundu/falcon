@@ -33,7 +33,6 @@ To install a specific release:
   go install github.com/yashkundu/falcon@v0.0.1
 ```
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 ## Features
 
@@ -42,9 +41,104 @@ To install a specific release:
 - Dynamic Backend URLs
 - Can be used as an API Gateway
 
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
+## Configuration
+
+The config file is in bin/config/config.toml\
+Refer to [TOML Specificataion](https://toml.io/en/).
+
+```toml
+# the main configs of the reverse-proxy
+[core]
+
+# the port where reverse-proxy will listen
+# default 80
+listen=8000
+
+# the port where the server api will listen
+# refer to the below api reference section
+# default 9900
+apiport=9900
+
+# Enable server stats route
+# default - false
+enableServerStats=false
+
+# The maximum connections that the reverse-proxy will allow at a particular time
+# 0 is infinite
+limitMaxConn=0
+
+# if it is 0, there is no timeout, in seconds
+readTimeout=0
+
+# if it is 0, there is no timeout, in seconds
+writeTimeout=0
+
+# if it is 0, there is no timeout, in seconds
+idleTimeout=0
+
+# enable this to implement rate limiting
+[limitReq]
+enable=false
+# in millisecond
+interval=1000
+frequency=100
+
+# config of proxy
+[proxy]
+
+[[proxy.routes]]
+endpoint="/hello"
+# match (specifies how routes are mathed to the incoming request)
+# match - [0 - exact, 1 - prefix, 2 - regex ]
+# default - exact
+match=1
+# balancer (specifies which load balancing algo to be used in case of multiple backends)
+# balancer - [0 - roundrobin, 1 - random, 2 - weighted-roundrobin ]
+balancer=0
+
+[[proxy.routes.backends]]
+# url should be in proper format <schema>://<host>:<port>
+url="http://localhost:3000"
+
+
+# Add varName to enable dynamically changing urls of the particular backend
+# varNames for all the backends should be unique othewise only the last backend 
+# specified with a particular varName will be dynamic
+varName="x1"
+
+
+[[proxy.routes]]
+endpoint="/world"
+match=1
+
+[[proxy.routes.backends]]
+url="http://localhost:3005"
+
+
+```
+## API Reference
+
+#### Get current requests handled at this moment
+
+```http
+  GET <proxyHostName>:9900/apiStatus/reqCount
+```
+##### proxyHostName  -  where the reveseProxy is served
+
+#### Dynamically update the backend url
+
+```http
+  POST <proxyHostName>:9900/apiStatus/backendChange
+```
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `varName` | `string` | varName of the backend            |
+| `id`      | `string` | the new backendUrl                |
+
+
+
+
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
-
-<p align="right">(<a href="#readme-top">back to top</a>)</p>
