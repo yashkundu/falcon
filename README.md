@@ -9,17 +9,12 @@ A dynamic reverse-proxy server built using Go which can be used as Load Balancer
 
 ## Contents
 
+- [Installation](#installation)
 - [Features](#features)
-- [Quick start](#quick-start)
-- [Benchmarks](#benchmarks)
-- [Configuration examples](#configuration-examples)
-    - [Reverse proxy with custom headers](#reverse-proxy-with-custom-headers)
-    - [API gateway with version-path mapping](#api-gateway-with-version-path-mapping)
-    - [Secured load balancer with weighted backends](#secured-load-balancer-with-weighted-backends)
-    - [TCP proxy as a ssh relay server](#tcp-proxy-as-a-ssh-relay-server)
-    - [Scooter API endpoint](#scooter-api-endpoint)
-    - [Scooter prometheus endpoint](#scooter-prometheus-endpoint)
-- [Migrate from nginx to scooter](#migrate-from-nginx-to-scooter)
+- [Configuration](#configuration)
+- [API referencr](#api-reference)
+- [License](#license)
+
 ## Installation
 
 Falcon can be installed directly via go install. To install the latest version:
@@ -121,14 +116,14 @@ url="http://localhost:3005"
 #### Get current requests handled at this moment
 
 ```http
-  GET <proxyHostName>:9900/apiStatus/reqCount
+  GET proxyHostName:9900/apiStatus/reqCount
 ```
 ##### proxyHostName  -  where the reveseProxy is served
 
 #### Dynamically update the backend url
 
 ```http
-  POST <proxyHostName>:9900/apiStatus/backendChange
+  POST proxyHostName:9900/apiStatus/backendChange
 ```
 
 | Parameter | Type     | Description                       |
