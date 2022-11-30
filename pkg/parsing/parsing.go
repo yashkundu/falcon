@@ -65,11 +65,9 @@ const fileName = "config.toml"
 func GetConfig() *Config {
 	once.Do(func() {
 		curDir, _ := os.Getwd()
-		filePath2 := filepath.Join(filepath.Dir(filepath.Dir(curDir)), "bin", "config", "config.toml")
-		filePath1 := "C:\\Users\\Hp\\OneDrive\\Desktop\\falcon\\bin\\config\\config.toml"
-		spew.Dump(filePath1, filePath2, "\n")
+		filePath := filepath.Join(curDir, "bin", "config", "config.toml")
 
-		_, err := toml.DecodeFile(filePath1, &config)
+		_, err := toml.DecodeFile(filePath, &config)
 		if err != nil {
 			log.Fatal(err)
 		}

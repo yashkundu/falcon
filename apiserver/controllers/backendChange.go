@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 
@@ -12,8 +13,8 @@ import (
 )
 
 type Change struct {
-	varName string
-	url     string
+	VarName string `json:"varName"`
+	Url     string `json:"url"`
 }
 
 func BackendChange(w http.ResponseWriter, r *http.Request) {
@@ -21,25 +22,31 @@ func BackendChange(w http.ResponseWriter, r *http.Request) {
 	var change Change
 	var success bool
 
-	err1 := json.NewDecoder(r.Body).Decode(&change)
+	body, err1 := ioutil.ReadAll(r.Body)
 
 	if err1 != nil {
 		fmt.Println(err1)
 		success = false
 	} else {
-		srv, ok := dynamic.DyServers[change.varName]
-		if !ok {
+		err := json.Unmarshal(body, &change)
+		if err != nil {
+			fmt.Println(err)
 			success = false
 		} else {
-			parsedUrl, err := url.Parse(change.url)
-			if err != nil {
-				fmt.Println(err)
+			srv, ok := dynamic.DyServers[change.VarName]
+			if !ok {
 				success = false
 			} else {
-				srv.Mu.Lock()
-				srv.URL = parsedUrl
-				srv.Mu.Unlock()
-				success = true
+				parsedUrl, err := url.Parse(change.Url)
+				if err != nil {
+					fmt.Println(err)
+					success = false
+				} else {
+					srv.Mu.Lock()
+					srv.URL = parsedUrl
+					srv.Mu.Unlock()
+					success = true
+				}
 			}
 		}
 	}

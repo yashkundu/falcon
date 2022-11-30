@@ -50,6 +50,8 @@ url="http://localhost:3000"
 
 
 # Add varName to enable dynamically changing urls of the particular backend
+# varNames for all the backends should be unique othewise only the last backend 
+# specified with a particular varName will be dynamic
 varName="x1"
 
 
