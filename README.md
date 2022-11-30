@@ -116,14 +116,14 @@ url="http://localhost:3005"
 #### Get current requests handled at this moment
 
 ```http
-  GET proxyHostName:9900/apiStatus/reqCount
+  GET /apiStatus/reqCount
 ```
 ##### proxyHostName  -  where the reveseProxy is served
 
 #### Dynamically update the backend url
 
 ```http
-  POST proxyHostName:9900/apiStatus/backendChange
+  POST /apiStatus/backendChange
 ```
 
 | Parameter | Type     | Description                       |
