@@ -1,5 +1,5 @@
 
-# 🦅 Falcon : A fast reverse-proxy
+# 🦅 Falcon : A dynamic reverse-proxy
 
 A dynamic reverse-proxy server built using Go which can be used as Load Balancer and API Gateway.
 
@@ -20,6 +20,24 @@ A dynamic reverse-proxy server built using Go which can be used as Load Balancer
     - [Scooter API endpoint](#scooter-api-endpoint)
     - [Scooter prometheus endpoint](#scooter-prometheus-endpoint)
 - [Migrate from nginx to scooter](#migrate-from-nginx-to-scooter)
+## Installation
+
+Falcon can be installed directly via go install. To install the latest version:
+
+```bash
+  go install github.com/yashkundu/falcon@latest
+```
+    
+To install a specific release:
+```bash
+  go install github.com/yashkundu/falcon@v0.0.1
+```
+## Built With
+
+* [![Next][Next.js]][Next-url]
+* [![React][React.js]][React-url]
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 ## Features
 
 - L7 Load balancing
