@@ -36,7 +36,9 @@ func BackendChange(w http.ResponseWriter, r *http.Request) {
 				fmt.Println(err)
 				success = false
 			} else {
+				srv.Mu.Lock()
 				srv.URL = parsedUrl
+				srv.Mu.Unlock()
 				success = true
 			}
 		}
