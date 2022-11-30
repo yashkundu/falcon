@@ -32,12 +32,9 @@ To install a specific release:
 ```bash
   go install github.com/yashkundu/falcon@v0.0.1
 ```
-## Built With
-
-* [![Next][Next.js]][Next-url]
-* [![React][React.js]][React-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## Features
 
 - L7 Load balancing
@@ -45,8 +42,9 @@ To install a specific release:
 - Dynamic Backend URLs
 - Can be used as an API Gateway
 
-
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
 ## License
 
 [MIT](https://choosealicense.com/licenses/mit/)
 
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
