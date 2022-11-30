@@ -14,7 +14,6 @@ import (
 type Config struct {
 	Core     Core     `toml:"core"`
 	LimitReq LimitReq `toml:"limitReq"`
-	Log      Log      `toml:"log"`
 	Proxy    Proxy    `toml:"proxy"`
 }
 
@@ -33,10 +32,6 @@ type LimitReq struct {
 	Interval  int  `toml:"interval"`
 	Frequency int  `toml:"frequency"`
 	Mode      int  `toml:"mode"`
-}
-
-type Log struct {
-	Level string `toml:"level"`
 }
 
 type Proxy struct {
