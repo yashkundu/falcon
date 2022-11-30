@@ -118,7 +118,6 @@ url="http://localhost:3005"
 ```bash
   GET <proxyHostName>:9900/apiStatus/reqCount
 ```
-##### proxyHostName  -  where the reveseProxy is served
 
 #### Dynamically update the backend url
 
@@ -129,7 +128,7 @@ url="http://localhost:3005"
 | Parameter | Type     | Description                       |
 | :-------- | :------- | :-------------------------------- |
 | `varName` | `string` | varName of the backend            |
-| `id`      | `string` | the new backendUrl                |
+| `url`      | `string` | the new backendUrl                |
 
 
 
