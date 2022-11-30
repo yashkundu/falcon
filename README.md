@@ -115,14 +115,14 @@ url="http://localhost:3005"
 
 #### Get current requests handled at this moment
 
-```http
+```bash
   GET /apiStatus/reqCount
 ```
 ##### proxyHostName  -  where the reveseProxy is served
 
 #### Dynamically update the backend url
 
-```http
+```bash
   POST /apiStatus/backendChange
 ```
 
