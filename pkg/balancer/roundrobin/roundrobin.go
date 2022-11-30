@@ -5,6 +5,7 @@ import (
 	"sync/atomic"
 
 	"github.com/yashkundu/falcon/pkg/balancer"
+	"github.com/yashkundu/falcon/pkg/dynamic"
 )
 
 // Individual roundrobin balancer for each route
@@ -13,11 +14,11 @@ type roundrobin struct {
 	next    uint32
 }
 
-func NewBalancer(urls []*url.URL) *roundrobin {
+func NewBalancer(urls []*url.URL, varNames []string) *roundrobin {
 	rr := &roundrobin{}
 
 	for i := 0; i < len(urls); i++ {
-		rr.AddServer(urls[i])
+		rr.AddServer(urls[i], varNames[i])
 	}
 	return rr
 }
@@ -27,8 +28,12 @@ func (rr *roundrobin) Next() *balancer.Server {
 	return rr.Servers[(int(n)-1)%len(rr.Servers)]
 }
 
-func (rr *roundrobin) AddServer(url *url.URL) {
-	rr.Servers = append(rr.Servers, &balancer.Server{URL: url})
+func (rr *roundrobin) AddServer(url *url.URL, varName string) {
+	srv := &balancer.Server{URL: url}
+	if varName != "" {
+		dynamic.DyServers[varName] = srv
+	}
+	rr.Servers = append(rr.Servers, srv)
 }
 
 func (rr *roundrobin) GetServers() []*balancer.Server {

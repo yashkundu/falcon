@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/BurntSushi/toml"
+	"github.com/davecgh/go-spew/spew"
 )
 
 // The configuration struct of config.toml
@@ -18,12 +19,13 @@ type Config struct {
 }
 
 type Core struct {
-	Listen       int `toml:"listen"`
-	ApiPort      int `toml:"apiport"`
-	LimitMaxConn int `toml:"limitMaxConn"`
-	ReadTimeout  int `toml:"readTimeout"`
-	WriteTimeout int `toml:"writeTimeout"`
-	IdleTimeout  int `toml:"idleTimeout"`
+	Listen            int  `toml:"listen"`
+	ApiPort           int  `toml:"apiport"`
+	LimitMaxConn      int  `toml:"limitMaxConn"`
+	ReadTimeout       int  `toml:"readTimeout"`
+	WriteTimeout      int  `toml:"writeTimeout"`
+	IdleTimeout       int  `toml:"idleTimeout"`
+	EnableServerStats bool `toml:"enableServerStats"`
 }
 
 type LimitReq struct {
@@ -49,7 +51,8 @@ type Route struct {
 }
 
 type Backend struct {
-	Url string `toml:"url"`
+	Url     string `toml:"url"`
+	VarName string `toml:"varName"`
 }
 
 var (
@@ -64,14 +67,13 @@ func GetConfig() *Config {
 		curDir, _ := os.Getwd()
 		filePath2 := filepath.Join(filepath.Dir(filepath.Dir(curDir)), "bin", "config", "config.toml")
 		filePath1 := "C:\\Users\\Hp\\OneDrive\\Desktop\\falcon\\bin\\config\\config.toml"
-		log.Printf("filePath : %s\n", filePath2)
+		spew.Dump(filePath1, filePath2, "\n")
 
 		_, err := toml.DecodeFile(filePath1, &config)
 		if err != nil {
 			log.Fatal(err)
 		}
-		log.Println("Config -> ")
-		log.Println(config)
+		spew.Dump(config, "\n")
 	})
 	return &config
 }

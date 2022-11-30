@@ -2,7 +2,6 @@ package proxy
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"net/http"
 	"net/http/httputil"
@@ -10,6 +9,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/yashkundu/falcon/pkg/balancer"
 	"github.com/yashkundu/falcon/pkg/constraints"
 	"github.com/yashkundu/falcon/pkg/constraints/status"
@@ -22,7 +22,7 @@ type Proxy struct {
 }
 
 func (p *Proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
-	log.Printf("req -> %s", req.Host)
+	spew.Dump(req.URL.Path, req.URL.Host)
 
 	if parsing.GetConfig().LimitReq.Enable {
 		ip := strings.Split(req.RemoteAddr, ":")[0]
@@ -31,7 +31,7 @@ func (p *Proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 		}
 	}
 
-	if parsing.GetConfig().Core.LimitMaxConn > 0 {
+	if parsing.GetConfig().Core.EnableServerStats {
 		status.Instance().AddReqCount()
 		defer status.Instance().SubReqCount()
 	}
@@ -40,6 +40,8 @@ func (p *Proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 	existRoute := false
 
 	for _, r := range loader.Routes {
+		spew.Dump("req url path", req.URL.Path)
+		spew.Dump("route endpoint", r.Endpoint)
 		switch r.Match {
 		case loader.ExactMatch:
 			if req.URL.Path == r.Endpoint {
@@ -58,6 +60,8 @@ func (p *Proxy) ServeHTTP(res http.ResponseWriter, req *http.Request) {
 			}
 		}
 	}
+
+	spew.Dump(existRoute, route)
 
 	if existRoute {
 		proxy := newHostReverseProxy(route.GetTargetServer())
@@ -78,11 +82,15 @@ func singleJoiningSlash(a, b string) string {
 }
 
 func newHostReverseProxy(server *balancer.Server) *httputil.ReverseProxy {
+	spew.Dump(server)
 	director := func(req *http.Request) {
 		targetQuery := server.URL.RawQuery
 		req.URL.Scheme = server.URL.Scheme
 		req.URL.Host = server.URL.Host
 		req.URL.Path = singleJoiningSlash(server.URL.Path, req.URL.Path)
+		req.Host = server.URL.Host
+
+		spew.Dump(req.URL.Scheme, req.URL.Host, req.URL.Path)
 
 		if targetQuery == "" || req.URL.RawQuery == "" {
 			req.URL.RawQuery = targetQuery + req.URL.RawQuery
@@ -91,7 +99,6 @@ func newHostReverseProxy(server *balancer.Server) *httputil.ReverseProxy {
 		}
 
 		if _, ok := req.Header["User-Agent"]; !ok {
-			// explicitly disable User-Agent so it's not set to default value
 			req.Header.Set("User-Agent", "")
 		}
 		xForwarded := req.Header["X-Forwarded-For"]
@@ -135,8 +142,6 @@ func (s *GateServer) proxy80() *http.Server {
 			panic(err.Error())
 		}
 	}()
-	fmt.Println("Falcon reverse-proxy-server : 80")
-
 	return srv
 }
 

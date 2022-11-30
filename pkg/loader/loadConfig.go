@@ -5,9 +5,11 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/yashkundu/falcon/pkg/balancer"
 	"github.com/yashkundu/falcon/pkg/balancer/random"
 	"github.com/yashkundu/falcon/pkg/balancer/roundrobin"
+	"github.com/yashkundu/falcon/pkg/dynamic"
 	"github.com/yashkundu/falcon/pkg/parsing"
 	"github.com/yashkundu/falcon/pkg/utils"
 )
@@ -15,17 +17,17 @@ import (
 type BalancerType int
 
 const (
+	RoundRobinBalancer  BalancerType = 0
 	RandomBalancer      BalancerType = 1
-	RoundRobinBalancer  BalancerType = 2
-	WRoundRobinBalancer BalancerType = 3
+	WRoundRobinBalancer BalancerType = 2
 )
 
 type MatchType int
 
 const (
-	ExactMatch  MatchType = 1
-	PrefixMatch MatchType = 2
-	RegexMatch  MatchType = 3
+	ExactMatch  MatchType = 0
+	PrefixMatch MatchType = 1
+	RegexMatch  MatchType = 2
 )
 
 type RouteInfo struct {
@@ -75,26 +77,31 @@ func getRouteInfo(routeConfig *parsing.Route) *RouteInfo {
 			log.Fatal(err)
 		}
 		routeInfo.TargetServer = &balancer.Server{URL: url}
+		if routeConfig.Backends[0].VarName != "" {
+			dynamic.DyServers[routeConfig.Backends[0].VarName] = routeInfo.TargetServer
+		}
 		return routeInfo
 	}
 
 	routeInfo.IsMultiTarget = true
 	urls := make([]*url.URL, 0)
+	varNames := make([]string, 0)
 	for _, b := range routeConfig.Backends {
 		curUrl, err := url.Parse(b.Url)
 		if err != nil {
 			log.Fatal(err)
 		}
 		urls = append(urls, curUrl)
+		varNames = append(varNames, b.VarName)
 	}
 
 	switch BalancerType(routeConfig.Balancer) {
 	case RandomBalancer:
-		routeInfo.Balancer = random.NewBalancer(urls)
+		routeInfo.Balancer = random.NewBalancer(urls, varNames)
 	case RoundRobinBalancer:
-		routeInfo.Balancer = roundrobin.NewBalancer(urls)
+		routeInfo.Balancer = roundrobin.NewBalancer(urls, varNames)
 	case WRoundRobinBalancer:
-		routeInfo.Balancer = roundrobin.NewBalancer(urls)
+		routeInfo.Balancer = roundrobin.NewBalancer(urls, varNames)
 	}
 
 	return routeInfo
@@ -107,7 +114,8 @@ func (routeInfo *RouteInfo) GetTargetServer() *balancer.Server {
 	return routeInfo.Balancer.Next()
 }
 
-func Init() error {
+func init() {
 	loadConfig()
-	return nil
+	log.Println("Loaded Configs : ")
+	spew.Dump(Routes)
 }

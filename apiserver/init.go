@@ -33,6 +33,5 @@ func Run() *http.Server {
 		}
 	}()
 
-	fmt.Println("\nAPI监听端口:9900")
 	return srv
 }

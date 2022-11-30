@@ -1,17 +1,30 @@
 
 [core]
 # Configuration file
-listen=80
+
+# default 80
+listen=8000
+
+# default 9900
 apiport=9900
+
+# Enable server stats route
+# default - false
+enableServerStats=false
 
 # The maximum connections that the reverse-proxy will allow at a particular time
 # 0 is infinite
 limitMaxConn=0
 
+# if it is 0, there is no timeout, in seconds
 readTimeout=0
+
+# if it is 0, there is no timeout, in seconds
 writeTimeout=0
 
+# if it is 0, there is no timeout, in seconds
 idleTimeout=0
+
 
 # [limitReq]
 # enable=true
@@ -19,23 +32,25 @@ idleTimeout=0
 # interval=1000
 # frequency=100
 
-[log]
-level="debug"
-
 [proxy]
 
 [[proxy.routes]]
 endpoint="/hello"
 # match (specifies how routes are mathed to the incoming request)
 # match - [0 - exact, 1 - prefix, 2 - regex ]
+# Default - exact
 match=1
 # balancer (specifies which load balancing algo to be used in case of multiple backends)
-# balancer - [0 - random, 1 - roundrobin, 2 - weighted-roundrobin ]
-balancer=1
+# balancer - [0 - roundrobin, 1 - random, 2 - weighted-roundrobin ]
+balancer=0
 
 [[proxy.routes.backends]]
 # url should be in proper format <schema>://<host>:<port>
-url="http://localhost:3001"
+url="http://localhost:3000"
+
+
+# Add varName to enable dynamically changing urls of the particular backend
+varName="x1"
 
 
 [[proxy.routes]]
@@ -43,5 +58,5 @@ endpoint="/world"
 match=1
 
 [[proxy.routes.backends]]
-url="http://localhost:3001"
+url="http://localhost:3005"
 

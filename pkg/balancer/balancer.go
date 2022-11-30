@@ -7,7 +7,7 @@ import (
 
 type Balancer interface {
 	Next() *Server
-	AddServer(url *url.URL)
+	AddServer(url *url.URL, varName string)
 	GetServers() []*Server
 	CountServers() int
 }

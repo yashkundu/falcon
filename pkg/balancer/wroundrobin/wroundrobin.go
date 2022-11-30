@@ -5,6 +5,7 @@ import (
 	"sync/atomic"
 
 	"github.com/yashkundu/falcon/pkg/balancer"
+	"github.com/yashkundu/falcon/pkg/dynamic"
 )
 
 // Individual roundrobin balancer for each route
@@ -33,10 +34,10 @@ func (wrr *wroundrobin) reduce() {
 	}
 }
 
-func NewBalancer(urls []*url.URL) *wroundrobin {
+func NewBalancer(urls []*url.URL, varNames []string) *wroundrobin {
 	wrr := &wroundrobin{}
 	for i := 0; i < len(urls); i++ {
-		wrr.AddServer(urls[i])
+		wrr.AddServer(urls[i], varNames[i])
 	}
 	wrr.reduce()
 	return wrr
@@ -64,12 +65,18 @@ func (wrr *wroundrobin) Next() *balancer.Server {
 	return wrr.Servers[ind]
 }
 
-func (wrr *wroundrobin) AddServer(url *url.URL) {
+func (wrr *wroundrobin) AddServer(url *url.URL, varName string) {
 	curWt := 0
 	if curWt < 1 {
 		curWt = 1
 	}
-	wrr.Servers = append(wrr.Servers, &balancer.Server{URL: url})
+
+	srv := &balancer.Server{URL: url}
+	if varName != "" {
+		dynamic.DyServers[varName] = srv
+	}
+
+	wrr.Servers = append(wrr.Servers, srv)
 	wrr.totalWt += uint32(curWt)
 	wrr.wts = append(wrr.wts, wrr.wts[len(wrr.wts)-1]+uint32(curWt))
 }
