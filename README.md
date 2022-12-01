@@ -12,7 +12,7 @@ A dynamic reverse-proxy server built using Go which can be used as Load Balancer
 - [Installation](#installation)
 - [Features](#features)
 - [Configuration](#configuration)
-- [API referencr](#api-reference)
+- [API reference](#api-reference)
 - [License](#license)
 
 ## Installation
