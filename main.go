@@ -10,12 +10,14 @@ import (
 	"time"
 
 	"github.com/yashkundu/falcon/apiserver"
+	"github.com/yashkundu/falcon/pkg/flag"
 	"github.com/yashkundu/falcon/pkg/parsing"
 	"github.com/yashkundu/falcon/pkg/proxy"
 )
 
 func main() {
 
+	log.Println(flag.Rand)
 	p := new(proxy.GateServer)
 	servers := p.Run()
 

@@ -2,8 +2,6 @@ package parsing
 
 import (
 	"log"
-	"os"
-	"path/filepath"
 	"sync"
 
 	"github.com/BurntSushi/toml"
@@ -50,19 +48,28 @@ type Backend struct {
 	VarName string `toml:"varName"`
 }
 
+type File struct {
+	FilePath string
+}
+
 var (
-	config Config
-	once   sync.Once
+	config     Config
+	once       sync.Once
+	ConfigFile *File
 )
+
+func init() {
+	ConfigFile = new(File)
+}
 
 const fileName = "config.toml"
 
 func GetConfig() *Config {
 	once.Do(func() {
-		curDir, _ := os.Getwd()
-		filePath := filepath.Join(curDir, "bin", "config", "config.toml")
+		// curDir, _ := os.Getwd()
+		// filePath := filepath.Join(curDir, "bin", "config", "config.toml")
 
-		_, err := toml.DecodeFile(filePath, &config)
+		_, err := toml.DecodeFile(ConfigFile.FilePath, &config)
 		if err != nil {
 			log.Fatal(err)
 		}
