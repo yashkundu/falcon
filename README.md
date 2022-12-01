@@ -25,7 +25,15 @@ Falcon can be installed directly via go install. To install the latest version:
     
 To install a specific release:
 ```bash
-  go install github.com/yashkundu/falcon@v0.0.1
+  go install github.com/yashkundu/falcon@v1.0.0
+```
+
+## Running Falcon
+
+To start the proxy-server run :
+
+```bash
+  falcon -config=<configFilePath>
 ```
 
 
